@@ -1,25 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import * as React from "react";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 
-function App() {
+export default function GoogleFormDialog() {
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h1>お問い合わせフォーム</h1>
+      <Button
+        variant="contained"
+        onClick={handleClickOpen}
+        style={{
+          backgroundColor: "#4285F4",
+          fontSize: "18px",
+          padding: "12px 24px",
+        }}
+      >
+        フォームを開く
+      </Button>
+
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+        <DialogTitle>Googleフォーム</DialogTitle>
+        <DialogContent style={{ height: "600px" }}>
+          <iframe
+            src="https://docs.google.com/forms/d/e/1FAIpQLSdo2LNhPW8NVimLMzytQIto1eMVlzyIL8TYDoCBibYbLggQeg/viewform?usp=header"
+            width="100%"
+            height="100%"
+            style={{ border: "none" }}
+            title="Google Form"
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
-
-export default App;
