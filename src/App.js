@@ -1,28 +1,8 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-
-// エラーを無視するBoundary
-class IgnoreIframeErrors extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error, errorInfo) {
-    console.warn("Ignored iframe error:", error);
-  }
-
-  render() {
-    return this.props.children;
-  }
-}
 
 export default function App() {
   const [openForm, setOpenForm] = React.useState(false);
@@ -30,16 +10,28 @@ export default function App() {
   const handleOpenForm = () => setOpenForm(true);
   const handleCloseForm = () => setOpenForm(false);
 
-  // グローバルエラーを無視
-  React.useEffect(() => {
-    window.onerror = () => true;
+  // Instagramスクリプト読み込み & 再レンダリング処理
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://www.instagram.com/embed.js";
+    script.async = true;
+    script.onload = () => {
+      if (window.instgrm) {
+        window.instgrm.Embeds.process();
+      }
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      if (window.instgrm) {
+        window.instgrm.Embeds.process();
+      }
+    };
   }, []);
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1 style={{ marginBottom: "20px" }}>お問い合わせフォーム</h1>
-
-      {/* Googleフォームを開くボタン */}
+      <h1>お問い合わせフォーム</h1>
       <Button
         variant="contained"
         onClick={handleOpenForm}
@@ -53,29 +45,23 @@ export default function App() {
         フォームを開く
       </Button>
 
-      {/* Instagramの埋め込み（常時表示） */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          marginTop: "20px",
-        }}
-      >
-        <IgnoreIframeErrors>
-          <iframe
-            src="https://www.instagram.com/p/DHr6i2iSft-/embed"
-            width="400"
-            height="480"
-            frameBorder="0"
-            scrolling="no"
-            allowTransparency="true"
-            title="Instagram Video"
-            style={{
-              borderRadius: "8px",
-              maxWidth: "90%",
-            }}
-          />
-        </IgnoreIframeErrors>
+      {/* Instagram埋め込み */}
+      <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+        <blockquote
+          className="instagram-media"
+          data-instgrm-permalink="https://www.instagram.com/p/DMky6IMB6JJ/?img_index"
+          data-instgrm-version="14"
+          style={{
+            background: "#FFF",
+            border: 0,
+            borderRadius: "8px",
+            boxShadow: "0 0 1px rgba(0,0,0,0.5),0 1px 10px rgba(0,0,0,0.15)",
+            margin: "1px",
+            padding: 0,
+            maxWidth: "540px",
+            width: "100%",
+          }}
+        ></blockquote>
       </div>
 
       {/* Googleフォームモーダル */}
